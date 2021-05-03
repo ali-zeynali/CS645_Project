@@ -8,6 +8,7 @@ class Sketch:
         self.partitioner = partitioner
 
     def load_dataset(self, path):
+        # load data from the file
         csv_header = None
         dataset = []
         with open(path, 'r') as read_obj:
@@ -24,6 +25,7 @@ class Sketch:
         return dataset, csv_header
 
     def sketch_numbers(self, headers, centroids, partition_sizes, isMax, A0, boundaries_list, objective_bound):
+        # find number of representative items for each group, solving ILP
         partition_sizes_aggregated = [0 for i in range(len(partition_sizes))]
         partition_sizes_aggregated[0] = partition_sizes[0]
         for i in range(1, len(partition_sizes)):
@@ -98,6 +100,7 @@ class Sketch:
         return group_sketches_sizes
 
     def sketch_data(self, data_path, table_name, isMax, A0, boundaries_list, objective_bound):
+        # Sketching
 
         dataset, header = self.load_dataset(data_path)
 
@@ -115,14 +118,20 @@ class Sketch:
         new_one_hot_output = []
         for i in range(n_groups):
             direct_data = []
+
+            # previous groups
             for j in range(i):
                 for d in previous_direct_results[j]:
                     direct_data.append(d)
             first_index = len(direct_data)
+
+            #current group
             for d in partitioned_data[i]:
                 direct_data.append(d)
                 new_ordered_data.append(d)
             last_index = len(direct_data)
+
+            # future groups
             for j in range(i + 1, n_groups):
                 for t in range(sketch_initial_numbers[j]):
                     direct_data.append(centroids[j])

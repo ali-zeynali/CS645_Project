@@ -2,6 +2,9 @@ import numpy as np
 
 
 class KDTree:
+    """
+    K-Dimensional Tree Partitioning
+    """
     def __init__(self, max_size, max_distance):
         self.max_size = max_size
         self.max_distance = max_distance
@@ -11,9 +14,20 @@ class KDTree:
         self.k = 0
 
     def get_distance(self, d1, d2):
+        """
+
+        :param d1:
+        :param d2:
+        :return: euclidean distance between d1 and d2
+        """
         return np.linalg.norm(np.array(d1) - np.array(d2))
 
     def get_max_distance(self, dataset):
+        """
+
+        :param dataset:
+        :return: maximum distance between two pairs in the dataset
+        """
         max_d = 0
         range_of_atts = [[float('inf'), -float('inf')] for _ in range(len(dataset[0]))]
         for i in range(len(dataset)):
@@ -42,6 +56,7 @@ class KDTree:
         return max_gr
 
     def recursive_split(self, data_groups, indexes, range_of_atts, from_att):
+        #Recursively split the dataset into 2^^k sub groups
         if from_att == self.k:
             return data_groups, indexes
         else:
@@ -71,9 +86,11 @@ class KDTree:
             return self.recursive_split(new_data_groups, new_indexes, range_of_atts, from_att + 1)
 
     def split_dataset(self, data, range_of_atts):
+        # split the dataset into 2^^k sub groups
         return self.recursive_split([data], [[i for i in range(len(data))]], range_of_atts, 0)
 
     def partition_group(self, data):
+        # Check whether the splitting is required then returns the group index for each tuple
         max_d, range_of_atts = self.get_max_distance(data)
         if len(data) > self.max_size or max_d > self.max_distance:
             group_of_data, indexes = self.split_dataset(data, range_of_atts)
@@ -94,6 +111,7 @@ class KDTree:
             return [0 for _ in range(len(data))]
 
     def fit(self, dataset):
+        # Fit the model to the input dataset
         self.dataset = dataset
         self.k = len(dataset[0])
 
@@ -101,9 +119,17 @@ class KDTree:
         self.NGroups = np.max(self.groups) + 1
 
     def get_classes(self):
+        """
+
+        :return: group index for each vector
+        """
         return self.groups
 
     def get_partitioned_data(self):
+        """
+
+        :return: groups of vectors
+        """
         partitioned = [[] for _ in range(self.NGroups)]
         for i in range(len(self.dataset)):
             g = self.groups[i]
@@ -111,11 +137,19 @@ class KDTree:
         return partitioned
 
     def get_group_sizes(self):
+        """
+
+        :return: size of each group after partitioning
+        """
         partitioned = self.get_partitioned_data()
         return [len(partitioned[i]) for i in range(self.NGroups)]
 
 
     def get_centroids(self):
+        """
+
+        :return: center of each group after partitioning
+        """
         partitioned = self.get_partitioned_data()
         centroids = [None for _ in range(self.NGroups)]
         for i in range(self.NGroups):

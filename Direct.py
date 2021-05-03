@@ -11,12 +11,14 @@ class Direct:
         self.headers = {}
 
     def time_process(self):
+        # To manage the termination of the ILP if it takes too much time
         while True:
             sleep(30 * 60)
             print("Process terminated because it took more than enough")
 
 
     def load_data(self, path, name):
+        # load data from the file
         csv_header = None
         dataset = []
         with open(path, 'r') as read_obj:
@@ -34,9 +36,11 @@ class Direct:
         self.headers[name] = csv_header
 
     def set_data(self, dataset, name):
+        # set data from the input of the function
         self.datasets[name] = dataset
 
     def get_att_index(self, table_name, att_name):
+        # find attribute index by its name
         header = self.headers[table_name]
         for i in range(len(header)):
             if header[i] == att_name:
@@ -44,6 +48,8 @@ class Direct:
         return None
 
     def direct_algorithm(self, name, isMax, A0, boundaries_list, objective_bound):
+        # Implementation of Direct
+
         if name not in self.datasets:
             print("Table name is not available")
             return
