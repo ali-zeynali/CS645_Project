@@ -54,7 +54,7 @@ class Direct:
             print("Table name is not available")
             return
         a0_index = self.get_att_index(name, A0)
-        if a0_index == None:
+        if A0 is not None and a0_index == None:
             print("Attribute name {0} is not available".format(A0))
             return
         data = self.datasets[name]
@@ -89,11 +89,13 @@ class Direct:
 
         if A0 is not None:
             prob += lpSum([prob_vars[j] * float(data[j][a0_index]) for j in range(len(data))])
+        else:
+            prob += lpSum([prob_vars[j] for j in range(len(data))])
 
 
-        process = multiprocessing.Process(target=self.time_process)
+        # process = multiprocessing.Process(target=self.time_process)
         prob.solve()
-        process.terminate()
+        # process.terminate()
         output = []
         one_hot_output = []
         for val in prob.variables():
