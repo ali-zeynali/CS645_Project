@@ -24,7 +24,8 @@ class Sketch:
                     dataset.append(row)
         return dataset, csv_header
 
-    def sketch_numbers(self, headers, centroids, partition_sizes, isMax, A0, boundaries_list, objective_bound):
+    @staticmethod
+    def sketch_numbers(headers, centroids, partition_sizes, isMax, A0, boundaries_list, objective_bound):
         # find number of representative items for each group, solving ILP
         partition_sizes_aggregated = [0 for i in range(len(partition_sizes))]
         partition_sizes_aggregated[0] = partition_sizes[0]
