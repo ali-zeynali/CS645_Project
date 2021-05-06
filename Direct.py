@@ -35,9 +35,10 @@ class Direct:
         self.datasets[name] = dataset
         self.headers[name] = csv_header
 
-    def set_data(self, dataset, name):
+    def set_data(self, dataset, name, header):
         # set data from the input of the function
         self.datasets[name] = dataset
+        self.headers[name] =header
 
     def get_att_index(self, table_name, att_name):
         # find attribute index by its name

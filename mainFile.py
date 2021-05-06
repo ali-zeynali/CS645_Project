@@ -1,6 +1,7 @@
 from Direct import *
 from KDTree import *
 from Sketch import *
+from GBT import *
 from time import time
 import json
 import numpy as np
@@ -110,21 +111,34 @@ def query4(percent):
 # sketch_ns = sketch.sketch_numbers(["b", "a"],data, [1,2,3,1], True, "a", [[2, 5], [3,6]], [2,7])
 # print(sketch_ns)
 
-percentages = [10, 20, 30]
-time_array = {}
-time_array["q1"] = []
-time_array["q2"] = []
-time_array["q3"] = []
-time_array["q4"] = []
-time_array["percentages"] = percentages
-for p in percentages:
-    q2 = query2(p)
-    q3 = query3(p)
-    q4 = query4(p)
-    time_array["q2"].append(q2)
-    time_array["q3"].append(q3)
-    time_array["q4"].append(q4)
+# percentages = [10, 20, 30]
+# time_array = {}
+# time_array["q1"] = []
+# time_array["q2"] = []
+# time_array["q3"] = []
+# time_array["q4"] = []
+# time_array["percentages"] = percentages
+# for p in percentages:
+#     q2 = query2(p)
+#     q3 = query3(p)
+#     q4 = query4(p)
+#     time_array["q2"].append(q2)
+#     time_array["q3"].append(q3)
+#     time_array["q4"].append(q4)
+#
+#
+# with open("direct_output.json", 'w') as writer:
+#     json.dump(time_array, writer)
 
+all_groups = [
+    [[1,2], [0,2], [1,0]],
+    [[3,2], [3,2], [3,1], [3,0]],
+    [[1, 3], [ 0, 4]],
+    [[4, 4], [3,4], [4,3]]
+]
+centroids = [[1,1], [3,1], [1,3], [3,3]]
 
-with open("direct_output.json", 'w') as writer:
-    json.dump(time_array, writer)
+gbt = GBT("name", ["a", "b"], all_groups, centroids, True, "a", [[1, None], [1, None]], [1,None])
+
+p, f = gbt.Refine([0,1,2,3], [0,1,2,3], [0,1,1,1,1,1,0,1,1,0,0,1,1,1,1,1])
+print(p)

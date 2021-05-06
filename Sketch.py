@@ -137,7 +137,7 @@ class Sketch:
                 for t in range(sketch_initial_numbers[j]):
                     direct_data.append(centroids[j])
 
-            self.direct.set_data(direct_data, table_name)
+            self.direct.set_data(direct_data, table_name, header)
             output, one_hot_output = self.direct.direct_algorithm(table_name, isMax, A0, boundaries_list,
                                                                   objective_bound)
             for j in range(first_index, last_index):

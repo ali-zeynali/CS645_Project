@@ -15,7 +15,6 @@ import numpy as np
 class GBT:
     def __init__(self,table_name, att_names, all_groups, centroids, isMax, A0, boundaries_list, objective_bound):
 
-        #TODO complete this
         self.all_groups = all_groups
         self.centroids = centroids
         self.att_names = att_names
@@ -48,7 +47,7 @@ class GBT:
                     input_data.append(self.centroids[g_index])
         return input_data
 
-    def Refine(self, Q, P, S, Ps):
+    def Refine(self, P, S, Ps):
         """
 
         :param Q:
@@ -64,11 +63,10 @@ class GBT:
         queue = S.copy()
         while len(queue) > 0:
             Gi = queue.pop()
-            ti = self.centroids[Gi]
-            if ti not in Ps:
+            if Ps[Gi + self.n] == 0:
                 continue
             input_data = self.get_data_from_Ps(Ps)
-            self.direct.set_data(input_data, self.table_name)
+            self.direct.set_data(input_data, self.table_name, self.att_names)
             output, one_hot_output = self.direct.direct_algorithm(self.table_name, self.isMax, self.A0, self.boundaries_list, self.objective_bound)
             feasible = True if np.sum(one_hot_output[self.groups_sizes_aggregated[Gi] : len(self.all_groups[Gi]) + self.groups_sizes_aggregated[Gi]]) > 0 else False
             if feasible:
@@ -77,10 +75,10 @@ class GBT:
                 for j  in range(self.groups_sizes_aggregated[Gi], len(self.all_groups[Gi]) + self.groups_sizes_aggregated[Gi]):
                     Ps_prime[j] = one_hot_output[j]
 
-
-                if Gi in S:
-                    S.remove(Gi)
-                p, F_prime = self.Refine(self, Q, P, Ps_prime)
+                S_prime = S.copy()
+                if Gi in S_prime:
+                    S_prime.remove(Gi)
+                p, F_prime = self.Refine( P,S_prime , Ps_prime)
                 if len(F_prime) > 0:
                     F = np.union1d(F, F_prime)
                     for f_item in F:
@@ -90,7 +88,7 @@ class GBT:
                 else:
                     return p, F
             else:
-                if sorted(S) != sorted(P): #TODO complete this line to works
+                if sorted(S) != sorted(P):
                     F = np.union1d(F, Gi)
                     return [0 for _ in range(self.n + len(self.centroids))], F
         return [0 for _ in range(self.n + len(self.centroids))], F
