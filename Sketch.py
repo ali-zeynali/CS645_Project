@@ -87,16 +87,23 @@ class Sketch:
         for val in prob.variables():
             if val.varValue != None:
                 ind = int(val.name[2:])
-                if ind < passed_group_data + partition_sizes[current_group]:
-                    if val.varValue > 0:
-                        group_sketches_sizes[current_group] += 1
-                elif ind == passed_group_data + partition_sizes[current_group]:
-                    passed_group_data += partition_sizes[current_group]
-                    current_group += 1
-                    if val.varValue > 0:
-                        group_sketches_sizes[current_group] += 1
-                else:
-                    print("error in group counting!")
+                Gi = 0
+                for g in range(len(centroids)):
+                    if ind < partition_sizes_aggregated[g]:
+                        Gi = g
+                        break
+                if val.varValue > 0:
+                    group_sketches_sizes[Gi] += 1
+                # if ind < passed_group_data + partition_sizes[current_group]:
+                #     if val.varValue > 0:
+                #         group_sketches_sizes[current_group] += 1
+                # elif ind == passed_group_data + partition_sizes[current_group]:
+                #     passed_group_data += partition_sizes[current_group]
+                #     current_group += 1
+                #     if val.varValue > 0:
+                #         group_sketches_sizes[current_group] += 1
+                # else:
+                #     print("error in group counting!")
 
         return group_sketches_sizes
 
